@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Kgen: gana con tareas desde casa</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#030705; --panel:#07140e; --g:#2BFF9A; --g-dim:#0F5E3C; --g-soft:#8FE9BE; --text:#CFF5E2; --muted:#6FA88C; --line:#124A31;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;color:var(--text);background:var(--bg);
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px;background-position:-1px -1px;
+  font-family:"Share Tech Mono",ui-monospace,"Courier New",monospace;font-size:17px;line-height:1.6;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(43,255,154,.14),transparent 60%),linear-gradient(var(--bg),transparent 30%,var(--bg) 100%);opacity:.92}
+main{position:relative;max-width:760px;margin:0 auto;padding:36px 20px 64px}
+.bar{color:var(--muted);font-size:.9rem;margin-bottom:34px}
+.bar b{color:var(--g);font-weight:400}
+h1,h2{font-family:Orbitron,"Share Tech Mono",sans-serif;margin:0;line-height:1.12}
+h1{font-size:clamp(1.9rem,7.4vw,3.2rem);font-weight:800;letter-spacing:.01em;color:#fff;text-shadow:0 0 22px rgba(43,255,154,.45)}
+.lead{color:var(--g-soft);max-width:54ch;margin:18px 0 34px}
+
+.panel{background:var(--panel);border:1px solid var(--g-dim);border-radius:4px;padding:22px 20px;position:relative;box-shadow:0 0 0 1px rgba(43,255,154,.06),0 0 40px rgba(43,255,154,.1)}
+.panel::before,.panel::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--g)}
+.panel::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.panel::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+.label{color:var(--muted);font-size:.95rem;margin:0}
+.code{font-family:Orbitron,sans-serif;font-weight:800;font-size:clamp(1.9rem,9vw,3rem);letter-spacing:.12em;color:var(--g);text-shadow:0 0 16px rgba(43,255,154,.7);margin:12px 0 4px;min-height:1.2em;word-break:break-all}
+.url{color:var(--muted);font-size:.85rem;word-break:break-all;margin:0}
+.note{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--g-dim);color:var(--muted);font-size:.92rem}
+
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.btn{appearance:none;cursor:pointer;font:inherit;font-size:1rem;padding:14px 20px;border-radius:3px;text-decoration:none;text-align:center;display:inline-block;border:1px solid var(--g)}
+.btn.go{background:var(--g);color:#02150C;font-weight:700;box-shadow:0 0 22px rgba(43,255,154,.35)}
+.btn.alt{background:transparent;color:var(--g)}
+.btn:hover{filter:brightness(1.12)}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.status{min-height:1.6em;margin:12px 0 0;color:var(--g-soft);font-size:.95rem}
+
+section{margin-top:54px}
+h2{font-size:clamp(1.15rem,4.6vw,1.5rem);font-weight:600;color:#fff;margin-bottom:14px}
+h2::before{content:"> ";color:var(--g)}
+ol{margin:0;padding:0;list-style:none;counter-reset:s;max-width:58ch}
+li{counter-increment:s;margin:12px 0;padding-left:2.4em;position:relative}
+li::before{content:counter(s) ".";position:absolute;left:0;color:var(--g)}
+details{border-bottom:1px solid var(--line);padding:14px 0}
+summary{cursor:pointer;color:var(--g-soft)}
+details p{margin:10px 0 0;color:var(--muted);max-width:58ch}
+.fine{margin-top:46px;font-size:.84rem;color:var(--muted);max-width:62ch}
+
+@media (prefers-reduced-motion:no-preference){
+  .cursor::after{content:"_";animation:blink 1s steps(1) infinite;color:var(--g)}
+  @keyframes blink{50%{opacity:0}}
+}
+</style>
+</head>
+<body>
+<main>
+  <p class="bar"><b>kgen</b>@referidos:~$ <span class="cursor">acceso</span></p>
+
+  <h1>Gana más con Kgen haciendo tareas desde casa</h1>
+  <p class="lead">Regístrate en Kgen con un código de invitación y empieza a completar tareas en línea a tu ritmo.</p>
+
+  <div class="panel" aria-live="polite">
+    <p class="label">Tu código de invitación</p>
+    <p class="code" id="code">········</p>
+    <p class="url" id="url"></p>
+    <p class="note">Cada persona que entra recibe un código asignado. Úsalo para registrarte.</p>
+  </div>
+
+  <div class="actions">
+    <a class="btn go" id="signup" href="#" target="_blank" rel="noopener">Registrarme en Kgen</a>
+    <button class="btn alt" id="copy" type="button">Copiar enlace</button>
+  </div>
+  <p class="status" id="status" role="status"></p>
+
+  <section>
+    <h2>Cómo empezar</h2>
+    <ol>
+      <li>Pulsa "Registrarme en Kgen": se abre con tu código de invitación ya incluido.</li>
+      <li>Crea tu cuenta en el sitio de Kgen.</li>
+      <li>Entra a las tareas disponibles y completa las que te convengan.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Preguntas frecuentes</h2>
+    <details><summary>¿Cuánto puedo ganar?</summary><p>Depende de las tareas disponibles y del tiempo que dediques. Revisa las condiciones y los pagos en el sitio oficial de Kgen antes de registrarte.</p></details>
+    <details><summary>¿Cómo recibo mis pagos?</summary><p>Los métodos y plazos los define Kgen. Los encontrarás en su sección de pagos.</p></details>
+    <details><summary>¿Esta página es oficial?</summary><p>No. Es una página independiente que comparte códigos de invitación de Kgen.</p></details>
+  </section>
+
+  <p class="fine">Página independiente, no pertenece a Kgen. Los resultados varían según cada persona.</p>
+</main>
+
+<script>
+/* ====== CONFIGURACIÓN ====== */
+// Pega aquí la URL de tu script de Google (termina en /exec)
+var URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwhu8MGLMyV0NkFAriRfO7GITJ_JtJGVkbbdv4_1Td1rKXt5O-qPwa7I4iq6Zo5ZJIEFQ/exec";
+// Enlaces de respaldo, por si el script no responde
+var RESPALDO = [
+  "https://www.kgen.quest/invite/2208528f",
+  "https://www.kgen.quest/invite/080882c6",
+  "https://www.kgen.quest/invite/580d78eb"
+];
+/* =========================== */
+(function(){
+  var PREFIJO = "https://www.kgen.quest/invite/";
+  var codeEl = document.getElementById("code");
+  var urlEl = document.getElementById("url");
+  var statusEl = document.getElementById("status");
+  var signup = document.getElementById("signup");
+  var link = "";
+
+  function valido(l){ return typeof l === "string" && l.indexOf(PREFIJO) === 0 && /^[A-Za-z0-9]+$/.test(l.slice(PREFIJO.length)); }
+  function guardado(){ try { return localStorage.getItem("kgenEnlace"); } catch(e){ return null; } }
+  function guardar(v){ try { localStorage.setItem("kgenEnlace", v); } catch(e){} }
+
+  function mostrar(l){
+    link = l;
+    var final = l.slice(PREFIJO.length).toUpperCase();
+    urlEl.textContent = l;
+    signup.href = l;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce){ codeEl.textContent = final; return; }
+    var chars = "0123456789ABCDEF", n = 0;
+    var t = setInterval(function(){
+      n++;
+      var out = "";
+      for(var i = 0; i < final.length; i++){ out += (i < n / 2) ? final[i] : chars[Math.floor(Math.random() * chars.length)]; }
+      codeEl.textContent = out;
+      if(n / 2 >= final.length){ clearInterval(t); codeEl.textContent = final; }
+    }, 60);
+  }
+
+  function respaldo(){
+    var l = RESPALDO[Math.floor(Math.random() * RESPALDO.length)];
+    mostrar(l);
+  }
+
+  // Si esta persona ya recibió un enlace, se le muestra el mismo (recargar no gasta turnos)
+  var previo = guardado();
+  if(valido(previo)){ mostrar(previo); }
+  else if(URL_SCRIPT.indexOf("PEGA_AQUI") === 0){ respaldo(); }
+  else {
+    fetch(URL_SCRIPT + "?t=" + Date.now(), { cache: "no-store" })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(valido(d && d.link)){ guardar(d.link); mostrar(d.link); } else { respaldo(); }
+      })
+      .catch(respaldo);
+  }
+
+  document.getElementById("copy").addEventListener("click", function(){
+    if(!link) return;
+    function ok(){ statusEl.textContent = "> enlace copiado"; }
+    function fail(){
+      var r = document.createRange(); r.selectNodeContents(urlEl);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      statusEl.textContent = "> selecciona y copia el enlace manualmente";
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(ok, fail); }
+    else { fail(); }
+  });
+})();
+</script>
+</body>
+</html>
