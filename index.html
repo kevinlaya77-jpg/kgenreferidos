@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,7 +14,7 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-,::before,*::after{box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{
   margin:0;color:var(--text);background:var(--bg);
@@ -27,7 +26,7 @@ body{
 }
 body::before{content:"";position:fixed;inset:0;pointer-events:none;
   background:radial-gradient(ellipse at 50% 0%,rgba(43,255,154,.14),transparent 60%),linear-gradient(var(--bg),transparent 30%,var(--bg) 100%);opacity:.92}
-main{position:relative;max-width:760px;margin:0 auto;padding:36px 20px 64px}
+main{position:relative;max-width:980px;margin:0 auto;padding:36px 20px 64px}
 .bar{color:var(--muted);font-size:.9rem;margin-bottom:34px}
 .bar b{color:var(--g);font-weight:400}
 h1,h2{font-family:Orbitron,"Share Tech Mono",sans-serif;margin:0;line-height:1.12}
@@ -60,7 +59,15 @@ li::before{content:counter(s) ".";position:absolute;left:0;color:var(--g)}
 details{border-bottom:1px solid var(--line);padding:14px 0}
 summary{cursor:pointer;color:var(--g-soft)}
 details p{margin:10px 0 0;color:var(--muted);max-width:58ch}
-.video-wrap{max-width:340px;margin:18px auto 0;border:1px solid var(--g-dim);border-radius:4px;padding:8px;background:var(--panel);box-shadow:0 0 40px rgba(43,255,154,.1)}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
+.col-video{order:-1}
+.col-main .actions:first-of-type{margin-top:20px}
+@media (min-width:860px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) 320px;gap:36px}
+  .col-video{order:2}
+  .col-main{order:1}
+}
+.video-wrap{max-width:340px;margin:0 auto;border:1px solid var(--g-dim);border-radius:4px;padding:8px;background:var(--panel);box-shadow:0 0 40px rgba(43,255,154,.1)}
 .video-wrap video{display:block;width:100%;height:auto;max-height:78vh;border-radius:2px;background:#000}
 .fine{margin-top:46px;font-size:.84rem;color:var(--muted);max-width:62ch}
 
@@ -84,28 +91,30 @@ details p{margin:10px 0 0;color:var(--muted);max-width:58ch}
   <h1>Gana más con Kgen haciendo tareas desde casa</h1>
   <p class="lead">Regístrate en Kgen con un código de invitación y empieza a completar tareas en línea a tu ritmo.</p>
 
-  <div class="panel" aria-live="polite">
-    <p class="label">Tu código de invitación</p>
-    <p class="code" id="code">········</p>
-    <p class="url" id="url"></p>
-    <p class="note">Cada persona que entra recibe un código asignado. Úsalo para registrarte.</p>
-  </div>
-
-  <div class="actions">
-    <a class="btn go" id="signup" href="#" target="_blank" rel="noopener">Registrarme en Kgen</a>
-    <button class="btn alt" id="copy" type="button">Copiar enlace</button>
-  </div>
-  <p class="status" id="status" role="status"></p>
-
-  <section>
-    <h2>Mira cómo funciona</h2>
-    <div class="video-wrap">
-      <video controls playsinline preload="metadata" poster="poster.jpg">
-        <source src="video.mp4" type="video/mp4">
-        Tu navegador no puede reproducir este video.
-      </video>
+  <div class="hero-grid">
+    <div class="col-video">
+      <div class="video-wrap">
+        <video controls playsinline preload="metadata" poster="poster.jpg">
+          <source src="video.mp4" type="video/mp4">
+          Tu navegador no puede reproducir este video.
+        </video>
+      </div>
     </div>
-  </section>
+    <div class="col-main">
+    <div class="panel" aria-live="polite">
+      <p class="label">Tu código de invitación</p>
+      <p class="code" id="code">········</p>
+      <p class="url" id="url"></p>
+      <p class="note">Cada persona que entra recibe un código asignado. Úsalo para registrarte.</p>
+    </div>
+
+    <div class="actions">
+      <a class="btn go" id="signup" href="#" target="_blank" rel="noopener">Registrarme en Kgen</a>
+      <button class="btn alt" id="copy" type="button">Copiar enlace</button>
+    </div>
+    <p class="status" id="status" role="status"></p>
+    </div>
+  </div>
 
   <section>
     <h2>Cómo empezar</h2>
