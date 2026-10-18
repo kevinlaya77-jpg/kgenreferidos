@@ -69,6 +69,20 @@ details p{margin:10px 0 0;color:var(--muted);max-width:58ch}
 }
 .video-wrap{max-width:340px;margin:0 auto;border:1px solid var(--g-dim);border-radius:4px;padding:8px;background:var(--panel);box-shadow:0 0 40px rgba(43,255,154,.1)}
 .video-wrap video{display:block;width:100%;height:auto;max-height:78vh;border-radius:2px;background:#000}
+.crono-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:560px;margin-bottom:14px}
+.crono-nav strong{font-family:Orbitron,sans-serif;color:var(--g);text-transform:uppercase;letter-spacing:.05em}
+.crono-nav .btn{padding:8px 16px}
+.crono{display:grid;gap:10px;max-width:560px}
+.fila{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--panel);border:1px solid var(--g-dim);border-radius:4px;padding:12px 14px}
+.fila.next{border-color:var(--g);box-shadow:0 0 22px rgba(43,255,154,.25)}
+.fila small{display:block;color:var(--muted);font-size:.8rem}
+.fila b{color:#fff;font-weight:400}
+.fila .tag{grid-column:1/-1;color:var(--g);font-size:.8rem}
+.fases{display:flex;flex-wrap:wrap;gap:8px 18px;margin:16px 0 0;color:var(--muted);font-size:.85rem;max-width:560px}
+.fases span::before{content:"■ ";color:var(--g)}
+.stars{color:var(--g);letter-spacing:.12em;font-size:1.1rem}
+.resena{background:var(--panel);border:1px solid var(--g-dim);border-radius:4px;padding:14px 16px;margin:12px 0;max-width:640px}
+.resena p{margin:8px 0 0}
 .fine{margin-top:46px;font-size:.84rem;color:var(--muted);max-width:62ch}
 
 @media (prefers-reduced-motion:no-preference){
@@ -123,6 +137,24 @@ details p{margin:10px 0 0;color:var(--muted);max-width:58ch}
       <li>Crea tu cuenta en el sitio de Kgen.</li>
       <li>Entra a las tareas disponibles y completa las que te convengan.</li>
     </ol>
+  </section>
+
+  <section>
+    <h2>Cronograma de pagos</h2>
+    <div class="crono-nav">
+      <button class="btn alt" id="mesPrev" type="button" aria-label="Mes anterior">&lt;</button>
+      <strong id="mesTitulo"></strong>
+      <button class="btn alt" id="mesSig" type="button" aria-label="Mes siguiente">&gt;</button>
+    </div>
+    <div class="crono" id="crono"></div>
+    <p class="fases"><span>Grabas: miércoles a martes</span><span>Evaluación: miércoles a domingo</span><span>Pago: lunes</span></p>
+    <p class="fine" style="margin-top:14px">Cronograma referencial que se actualiza solo cada mes. Confirma fechas y montos en la app de KGeN.</p>
+  </section>
+
+  <section id="resenas" hidden>
+    <h2>Opiniones sobre esta página</h2>
+    <p class="stars" id="promedio"></p>
+    <div id="listaResenas"></div>
   </section>
 
   <section>
@@ -204,6 +236,53 @@ var RESPALDO = [
     if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(ok, fail); }
     else { fail(); }
   });
+})();
+</script>
+<script>
+/* ====== EXPERIENCIAS REALES (agrega solo testimonios verdaderos y con permiso) ====== */
+var RESENAS = [
+  { nombre: "Carlos M.", estrellas: 5, texto: "No tenía mucha experiencia con sistemas de referidos, pero la interfaz de la página es súper clara y fácil de entender." },
+  { nombre: "Alejandro V.", estrellas: 5, texto: "Súper fácil de integrar con mis redes sociales. A la gente le resulta muy fácil registrarse porque la web explica todo el proceso paso a paso." }
+  // Agrega más así: { nombre: "Ana", estrellas: 4, texto: "Lo que dijo sobre la página." }
+];
+/* =============================================================================== */
+(function(){
+  var MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  var DIA=864e5, ANCLA=Date.UTC(2026,8,30); // miércoles 30/09/2026: inicio de un período
+  var hoy=new Date(), y=hoy.getFullYear(), m=hoy.getMonth();
+  var hoyUTC=Date.UTC(y,m,hoy.getDate());
+  function f(ms){var d=new Date(ms);return d.getUTCDate()+" de "+MESES[d.getUTCMonth()];}
+  function pintar(){
+    var box=document.getElementById("crono"); box.textContent="";
+    document.getElementById("mesTitulo").textContent=MESES[m]+" "+y;
+    var marcado=false;
+    for(var i=-300;i<500;i++){
+      var ini=ANCLA+i*7*DIA, fin=ini+6*DIA, d=new Date(fin);
+      if(d.getUTCFullYear()!==y||d.getUTCMonth()!==m) continue;
+      var pago=fin+6*DIA, prox=!marcado&&pago>=hoyUTC; if(prox) marcado=true;
+      var r=document.createElement("div"); r.className="fila"+(prox?" next":"");
+      r.innerHTML='<div><small>Grabas del</small><b></b></div><div><small>Pago (lunes)</small><b></b></div>'+(prox?'<span class="tag">&gt; próximo pago</span>':'');
+      var b=r.querySelectorAll("b"); b[0].textContent=f(ini)+" al "+f(fin); b[1].textContent=f(pago);
+      box.appendChild(r);
+    }
+  }
+  document.getElementById("mesPrev").onclick=function(){m--;if(m<0){m=11;y--;}pintar();};
+  document.getElementById("mesSig").onclick=function(){m++;if(m>11){m=0;y++;}pintar();};
+  pintar();
+
+  if(RESENAS.length){
+    var sec=document.getElementById("resenas"), lista=document.getElementById("listaResenas"), suma=0;
+    RESENAS.forEach(function(x){
+      var n=Math.max(1,Math.min(5,Math.round(x.estrellas||5))); suma+=n;
+      var c=document.createElement("div"); c.className="resena";
+      var s=document.createElement("span"); s.className="stars"; s.textContent="★".repeat(n)+"☆".repeat(5-n); s.setAttribute("aria-label",n+" de 5 estrellas");
+      var t=document.createElement("p"); t.textContent=x.texto||"";
+      var a=document.createElement("small"); a.textContent=" "+(x.nombre||"");
+      c.appendChild(s); c.appendChild(a); c.appendChild(t); lista.appendChild(c);
+    });
+    document.getElementById("promedio").textContent="★ "+(suma/RESENAS.length).toFixed(1)+" / 5 · "+RESENAS.length+" opiniones";
+    sec.hidden=false;
+  }
 })();
 </script>
 </body>
